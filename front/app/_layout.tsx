@@ -8,5 +8,5 @@ export default function RootLayout() {
     return () => {};
   }, []);
 
-  return <Stack />;
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

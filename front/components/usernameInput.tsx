@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { TextInput, View, StyleSheet, Pressable, Text } from "react-native";
+import { TextInput, View, StyleSheet } from "react-native";
 
 interface InputProps {
-  onSaveUsername?: (username: string) => void;
+  onUsernameChange?: (username: string) => void;
 }
 
-export default function Input({ onSaveUsername }: InputProps) {
+export default function Input({ onUsernameChange }: InputProps) {
   const [value, setValue] = useState("");
 
-  const handleSave = () => {
-    if (value.trim()) {
-      onSaveUsername?.(value);
-      setValue("");
-    }
+  const handleChange = (text: string) => {
+    setValue(text);
+    onUsernameChange?.(text);
   };
 
   return (
@@ -21,11 +19,8 @@ export default function Input({ onSaveUsername }: InputProps) {
         style={styles.input}
         placeholder="Entrez votre pseudo..."
         value={value}
-        onChangeText={setValue}
+        onChangeText={handleChange}
       />
-      <Pressable style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Envoyer</Text>
-      </Pressable>
     </View>
   );
 }
@@ -34,28 +29,14 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     paddingHorizontal: 20,
-    flexDirection: "row",
-    gap: 10,
+    marginBottom: 20,
   },
   input: {
-    flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 14,
   },
 });

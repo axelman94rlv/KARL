@@ -23,6 +23,7 @@ export const initSocket = async () => {
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     reconnectionAttempts: 10,
+    timeout: 20000,
     auth: {
       token: reconnectToken || null,
     },
