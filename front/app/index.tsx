@@ -1,7 +1,7 @@
 import { Text, View, Pressable, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import Input from "@/components/usernameInput";
-import AddPicture from "@/components/addPicture";
+import Input from "@/components/inputs/usernameInput";
+import AddPicture from "@/components/inputs/addPicture";
 import { useSocket } from "@/hooks/useSocket";
 import { useRouter } from "expo-router";
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initSocket, saveReconnectToken } from "@/services/socketService";
 import type { Socket } from "socket.io-client";
 
@@ -12,6 +13,19 @@ export const useSocket = () => {
 
   useEffect(() => {
     const setupSocket = async () => {
+      const [storedUsername, storedProfileImage] = await Promise.all([
+        AsyncStorage.getItem("username"),
+        AsyncStorage.getItem("profileImage"),
+      ]);
+
+      if (storedUsername) {
+        setSavedUsername(storedUsername);
+      }
+
+      if (storedProfileImage) {
+        setProfileImage(storedProfileImage);
+      }
+
       const socketInstance = await initSocket();
       setSocket(socketInstance);
 
@@ -29,6 +43,7 @@ export const useSocket = () => {
       const handleUsernameSaved = (data: any) => {
         console.log("💾 Pseudo sauvegardé:", data.username);
         setSavedUsername(data.username);
+        AsyncStorage.setItem("username", data.username);
         if (data.token) {
           saveReconnectToken(data.token);
         }
@@ -36,17 +51,22 @@ export const useSocket = () => {
 
       const handleProfileImageSaved = (data: any) => {
         console.log("📸 Photo de profil sauvegardée");
-        setProfileImage(`data:image/jpeg;base64,${data.profileImage}`);
+        const profileImageUri = `data:image/jpeg;base64,${data.profileImage}`;
+        setProfileImage(profileImageUri);
+        AsyncStorage.setItem("profileImage", profileImageUri);
       };
 
       const handleReconnected = (data: any) => {
         console.log("🔄 Reconnecté! Pseudo retrouvé:", data.username);
         setSavedUsername(data.username);
+        AsyncStorage.setItem("username", data.username);
 
         // Restaure la photo si elle existe
         if (data.profileImage) {
           console.log("📸 Photo de profil restaurée");
-          setProfileImage(`data:image/jpeg;base64,${data.profileImage}`);
+          const profileImageUri = `data:image/jpeg;base64,${data.profileImage}`;
+          setProfileImage(profileImageUri);
+          AsyncStorage.setItem("profileImage", profileImageUri);
         }
 
         setIsReconnecting(false);
@@ -56,6 +76,8 @@ export const useSocket = () => {
         console.log("⏰ Token expiré:", data.message);
         setSavedUsername("");
         setProfileImage(null);
+        AsyncStorage.removeItem("username");
+        AsyncStorage.removeItem("profileImage");
       };
 
       const handleReconnectAttempt = (attemptNumber: number) => {
