@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.KARL"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Fredoka-VariableFont_wdth,wght.ttf"]
+          "fonts": [
+            "./assets/fonts/Fredoka-VariableFont_wdth,wght.ttf"
+          ]
         }
       ],
       [

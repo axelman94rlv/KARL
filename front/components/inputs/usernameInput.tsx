@@ -3,9 +3,15 @@ import { TextInput, View, StyleSheet } from "react-native";
 
 interface InputProps {
   onUsernameChange?: (username: string) => void;
+  variant?: "light" | "dark";
+  placeholder?: string;
 }
 
-export default function Input({ onUsernameChange }: InputProps) {
+export default function Input({
+  onUsernameChange,
+  variant = "dark",
+  placeholder = "Entrez votre pseudo...",
+}: InputProps) {
   const [value, setValue] = useState("");
 
   const handleChange = (text: string) => {
@@ -13,11 +19,14 @@ export default function Input({ onUsernameChange }: InputProps) {
     onUsernameChange?.(text);
   };
 
+  const isLight = variant === "light";
+
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
-        placeholder="Entrez votre pseudo..."
+        style={[styles.input, isLight ? styles.inputLight : styles.inputDark]}
+        placeholder={placeholder}
+        placeholderTextColor={isLight ? "rgba(5,25,52,0.4)" : "rgba(255,255,255,0.5)"}
         value={value}
         onChangeText={handleChange}
       />
@@ -32,11 +41,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    borderRadius: 50,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    fontSize: 16,
+  },
+  inputLight: {
+    backgroundColor: "#fff",
+    color: "#051934",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  inputDark: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
+    color: "#fff",
   },
 });

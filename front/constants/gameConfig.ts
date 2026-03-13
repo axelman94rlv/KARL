@@ -6,9 +6,10 @@ export const GAMES = {
     type: "game",
     column: "left", // Colonne gauche
     rows: 2, // Occupe 2.5 lignes (350px)
-    image: require("@/assets/images/goat.png"),
+    image: require("@/assets/images/GOAT2.png"),
     imageHeight: 210, // Taille de l'image (sera clippée)
     titleGap: 30, // Gap entre le titre et l'image
+    description: "GOAT !!! est un jeu rapide, compétitif et très social : vide ta main en posant des combinaisons plus fortes que celles en jeu, bloque tes adversaires, et grimpe (ou chute) dans la hiérarchie à chaque manche. Devient le GOAT ultime en vidant tes cartes en premier",
   },
   pouleux: {
     id: "pouleux",
@@ -20,6 +21,7 @@ export const GAMES = {
     image: require("@/assets/images/pouleux.png"),
     imageHeight: 120,
     titleGap: 10,
+    description: "POULEUX est un jeu de rapidité et de sang-froid : repère les combinaisons perdantes, balance-les avant les autres, et évite d'être le dernier à tenir la pire main. Un seul pouleux suffit à tout perdre.",
   },
   cactus: {
     id: "cactus",
@@ -31,6 +33,7 @@ export const GAMES = {
     image: require("@/assets/images/cactus.png"),
     imageHeight: 160,
     titleGap: 80,
+    description: "CACTUS est un jeu de mémoire et de stratégie : mémorise tes cartes, échange-les au bon moment, et tente de clôturer avec la main la plus basse. Un mauvais échange peut tout faire basculer.",
   },
   aVenir: {
     id: "aVenir",

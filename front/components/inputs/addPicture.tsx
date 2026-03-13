@@ -8,6 +8,7 @@ interface AddPictureProps {
   onPictureRemoved?: () => void;
   initialImage?: string | null;
   onImageChange?: (base64: string | null, fileName: string | null) => void;
+  size?: number;
 }
 
 export default function AddPicture({
@@ -15,6 +16,7 @@ export default function AddPicture({
   onPictureRemoved,
   initialImage,
   onImageChange,
+  size = 80,
 }: AddPictureProps) {
   const [profileImage, setProfileImage] = useState<string | null>(
     initialImage || null,
@@ -36,7 +38,6 @@ export default function AddPicture({
   const requestPermissions = async () => {
     const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
     const mediaStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     return (
       cameraStatus.status === "granted" && mediaStatus.status === "granted"
     );
@@ -45,7 +46,6 @@ export default function AddPicture({
   const pickImage = async (useCamera: boolean) => {
     try {
       setIsLoading(true);
-
       const hasPermission = await requestPermissions();
       if (!hasPermission) {
         Alert.alert(
@@ -75,11 +75,7 @@ export default function AddPicture({
       if (!result.canceled) {
         const imageUri = result.assets[0].uri;
         const fileName = imageUri.split("/").pop() || "profile.jpg";
-
-        const base64 = await readAsStringAsync(imageUri, {
-          encoding: "base64",
-        });
-
+        const base64 = await readAsStringAsync(imageUri, { encoding: "base64" });
         setTempImage({ uri: imageUri, base64, fileName });
         setProfileImage(imageUri);
         onImageChange?.(base64, fileName);
@@ -90,14 +86,6 @@ export default function AddPicture({
       Alert.alert("Erreur", "Une erreur est survenue lors du chargement");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const sendImage = () => {
-    if (tempImage) {
-      onPictureSelected?.(tempImage.base64, tempImage.fileName);
-      setTempImage(null);
-      console.log("📤 Photo et pseudo envoyés au serveur");
     }
   };
 
@@ -114,56 +102,63 @@ export default function AddPicture({
         },
         style: "destructive",
       },
-      {
-        text: "Annuler",
-        style: "cancel",
-      },
+      { text: "Annuler", style: "cancel" },
     ]);
   };
 
   const showOptions = () => {
     Alert.alert("Ajouter une photo de profil", "Choisir une option", [
-      {
-        text: "Appareil photo",
-        onPress: () => pickImage(true),
-      },
-      {
-        text: "Galerie",
-        onPress: () => pickImage(false),
-      },
-      {
-        text: "Annuler",
-        style: "cancel",
-      },
+      { text: "Appareil photo", onPress: () => pickImage(true) },
+      { text: "Galerie", onPress: () => pickImage(false) },
+      { text: "Annuler", style: "cancel" },
     ]);
   };
 
+  const badgeSize = Math.max(24, size * 0.22);
+  const badgeFontSize = badgeSize * 0.5;
+
   return (
     <View style={styles.container}>
-      <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          pressed && styles.buttonPressed,
-          isLoading && styles.buttonDisabled,
-        ]}
-        onPress={showOptions}
-        disabled={isLoading}
-      >
-        {profileImage ? (
-          <Image source={{ uri: profileImage }} style={styles.profileImage} />
-        ) : (
-          <Text style={styles.buttonText}>+</Text>
-        )}
-      </Pressable>
-
-      {profileImage && (
+      <View style={{ position: "relative" }}>
         <Pressable
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={deleteImage}
+          style={({ pressed }) => [
+            styles.button,
+            { width: size, height: size, borderRadius: size / 2 },
+            pressed && styles.buttonPressed,
+            isLoading && styles.buttonDisabled,
+          ]}
+          onPress={showOptions}
+          disabled={isLoading}
         >
-          <Text style={styles.actionButtonText}>Supprimer</Text>
+          {profileImage ? (
+            <Image
+              source={{ uri: profileImage }}
+              style={{ width: size, height: size, borderRadius: size / 2 }}
+            />
+          ) : (
+            <Text style={[styles.buttonText, { fontSize: size * 0.4 }]}>+</Text>
+          )}
         </Pressable>
-      )}
+
+        {/* Croix rouge de suppression */}
+        {profileImage && (
+          <Pressable
+            style={[
+              styles.deleteBadge,
+              {
+                width: badgeSize,
+                height: badgeSize,
+                borderRadius: badgeSize / 2,
+                top: -badgeSize * 0.2,
+                right: -badgeSize * 0.2,
+              },
+            ]}
+            onPress={deleteImage}
+          >
+            <Text style={[styles.deleteBadgeText, { fontSize: badgeFontSize }]}>✕</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
@@ -174,9 +169,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
     backgroundColor: "#007AFF",
     justifyContent: "center",
     alignItems: "center",
@@ -193,36 +185,22 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   buttonText: {
-    fontSize: 40,
     color: "#fff",
     fontWeight: "bold",
   },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  buttonGroup: {
-    flexDirection: "column",
-    gap: 10,
-    marginTop: 15,
-    alignItems: "center",
-  },
-  actionButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  sendButton: {
-    backgroundColor: "#34C759",
-  },
-  deleteButton: {
+  deleteBadge: {
+    position: "absolute",
     backgroundColor: "#FF3B30",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 4,
   },
-  actionButtonText: {
+  deleteBadgeText: {
     color: "#fff",
-    fontWeight: "600",
-    fontSize: 12,
+    fontWeight: "700",
   },
 });

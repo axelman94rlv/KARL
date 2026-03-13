@@ -49,6 +49,7 @@ export default function Homepage() {
                   id={game.id}
                   type="game"
                   title={game.name}
+                  description={game.description}
                   color={game.color}
                   rows={game.rows}
                   image={game.image}
@@ -67,6 +68,7 @@ export default function Homepage() {
                   id={game.id}
                   type="game"
                   title={game.name}
+                  description={game.description}
                   color={game.color}
                   rows={game.rows}
                   image={game.image}
